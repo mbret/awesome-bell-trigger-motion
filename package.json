@@ -1,0 +1,23 @@
+{
+  "name": "awesome-bell-trigger-motion",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mbret/awesome-bell-trigger-motion.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mbret/awesome-bell-trigger-motion/issues"
+  },
+  "homepage": "https://github.com/mbret/awesome-bell-trigger-motion#readme",
+  "dependencies": {
+    "lodash": "^4.16.4",
+    "socket.io": "^1.5.0"
+  }
+}
