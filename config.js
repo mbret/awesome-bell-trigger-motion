@@ -1,4 +1,5 @@
 module.exports = {
-    server: "http://localhost:3002/triggers",
-    authToken: ""
+    server: "http://192.168.1.45:3002/triggers",
+    authToken: "",
+    ledPin: 17
 };
