@@ -1,20 +1,57 @@
 const socketClient = require("socket.io-client");
 const Gpio = require('onoff').Gpio;
+var request = require('request');
+// var raspi = require('raspi-io');
+// var five = require('johnny-five');
+// var board = new five.Board({io: new raspi()});
 const config = require("./config");
 const _ = require("lodash");
 try { _.merge(config, require("./config.local")); } catch (err) {}
+config.serverSocketUrl = config.server + "/triggers";
 let blink = null;
 let connected = false;
 let led = new Gpio(config.ledPin, 'out');
+let led2 = new Gpio(4, 'out');
+let pir = new Gpio(27, 'in', 'both');
 
 blinkLed(led, 1000);
 
+led2.writeSync(1); // 1 = on, 0 = off :)
+
 process.on('SIGINT', function () {
     led.unexport();
+    led2.unexport();
+    pir.unexport();
 });
 
-console.log("connecting to %s", config.server);
-let socket = socketClient(config.server, {
+// board.on('ready', function() {
+//
+//     // Create a new `motion` hardware instance.
+//     var motion = new five.Motion({
+//         pin: "P1-13"
+//     });
+//
+//     // "calibrated" occurs once, at the beginning of a session,
+//     motion.on("calibrated", function() {
+//         console.log("calibrated", Date.now());
+//     });
+//
+//     // "motionstart" events are fired when the "calibrated"
+//     // proximal area is disrupted, generally by some form of movement
+//     motion.on("motionstart", function() {
+//         console.log("motionstart", Date.now());
+//     });
+//
+//     // "motionend" events are fired following a "motionstart" event
+//     // when no movement has occurred in X ms
+//     motion.on("motionend", function() {
+//         console.log("motionend", Date.now());
+//     });
+//
+// });
+
+console.log("connecting to (socket) %s", config.serverSocketUrl);
+let socket = socketClient(config.serverSocketUrl, {
     timeout: 1000
 });
 
@@ -92,4 +129,19 @@ function blinkLed(led, ms) {
     blink = setInterval(function() {
         led.writeSync(led.readSync() ^ 1); // 1 = on, 0 = off :)
     }, ms);
+}
+
+function ring() {
+    let url = config.server + "/ring";
+    console.log("GET " + url);
+    request(url, function (error, response, body) {
+        if (error) {
+            console.error("error", error);
+        }
+        if (response.statusCode == 200) {
+            console.log("GET " + url + " => success");
+        } else {
+            console.log("GET " + url + " => meh :(");
+        }
+    });
 }
